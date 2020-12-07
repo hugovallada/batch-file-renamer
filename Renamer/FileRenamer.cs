@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Linq;
 namespace batch_file_renamer.Renamer
 {
     public class FileRenamer
@@ -11,7 +13,7 @@ namespace batch_file_renamer.Renamer
             return files;
         }
 
-        private static bool ContinueRename(string[] files)
+        private static bool ContinueRename(List<string> files)
         {
             Console.WriteLine("Os seguintes arquivos serão renomeados: ");
             foreach (var file in files)
@@ -30,16 +32,44 @@ namespace batch_file_renamer.Renamer
         public static void RenameFiles(string path, string baseName)
         {
             int counter = 0000;
+            string[] extensionsToRename;
 
-            string[] files = ReturnFiles(path);
+            List<string> files = new List<string>(ReturnFiles(path));
+
+            Console.WriteLine("Qual extensões devem ser renomeadas? Deixe em branco para renomear todas");
+            var extensions = Console.ReadLine();
+
+            extensionsToRename = extensions.Split(",");
+
+
+
+            List<string> extensionRename = new List<string>();
+
+            foreach (var extRename in extensionsToRename)
+            {
+                if (extRename.Length > 0) extensionRename.Add(extRename.ToLower().Trim());
+            }
+
+
+            if (!extensionRename.Any())
+            {
+                //TODO: Realizar o exclude das extensões que não façam parte do rename
+                Console.WriteLine("Lista Vazia, Todas as extensões serão renomeadas");
+            }
+            else
+            {
+                Console.WriteLine("A Lista possui extensões: As seguintes serão renomeadas");
+                extensionRename.ForEach(ext => Console.WriteLine(ext));
+            }
+
+
+
 
             //TODO: Realizar a operação para cancelar a renomeação, caso seja falso
             if (ContinueRename(files))
             {
                 Console.WriteLine("Continuará");
             }
-
-            //TODO: Criar a função para identificar as extensões que devem ser renomeadas
 
             foreach (var file in files)
             {
