@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System;
+using batch_file_renamer.Renamer;
 
 namespace batch_file_renamer
 {
@@ -8,6 +9,8 @@ namespace batch_file_renamer
 
         public static string option;
         public static string path;
+
+        public static string baseName;
         static void Main(string[] args)
         {
 
@@ -21,18 +24,12 @@ namespace batch_file_renamer
                 Console.WriteLine("Qual o caminho do diretório?");
                 path = Console.ReadLine();
 
-                Console.WriteLine(path);
-
                 if (Directory.Exists(path))
                 {
-                    Console.WriteLine("O diretório existe");
-                    string[] files = Directory.GetFiles(path);
-                    Console.WriteLine("Files: ");
+                    Console.WriteLine("Qual o nome base dos novos arquivos? Deixe em branco para utilizar um contador");
+                    baseName = Console.ReadLine();
 
-                    foreach (var file in files)
-                    {
-                        Console.WriteLine(file);
-                    }
+                    FileRenamer.RenameFiles(path, baseName);
                 }
                 else
                 {
