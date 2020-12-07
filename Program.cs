@@ -9,7 +9,6 @@ namespace batch_file_renamer
 
         public static string option;
         public static string path;
-
         public static string baseName;
         static void Main(string[] args)
         {
@@ -40,6 +39,10 @@ namespace batch_file_renamer
             else if (option.ToLower().Trim() == "file")
             {
                 Console.WriteLine("Você selecionou arquivo");
+            }
+            else
+            {
+                Console.WriteLine("A opção selecionada não existe");
             }
         }
     }
