@@ -21,6 +21,11 @@ namespace batch_file_renamer.Renamer
             {
                 Console.WriteLine($"{file} --- {counter}");
                 counter++;
+                //TODO: Realizar a renomeação
+
+                /*
+                * Path.GetExtension(file) retorna a extensão -- Path possui métodos estáticos para trabalhar com os nomes dos arquivos
+                */
             }
         }
     }
