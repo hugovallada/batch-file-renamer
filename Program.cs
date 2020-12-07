@@ -6,27 +6,27 @@ namespace batch_file_renamer
     class Program
     {
 
-        public static string op;
-        public static string caminho;
+        public static string option;
+        public static string path;
         static void Main(string[] args)
         {
 
             Console.WriteLine("Batch File Renamer - Versão 1.0");
             Console.WriteLine("Deseja trabalhar com arquivo ou diretório? (file/dir)");
 
-            op = Console.ReadLine();
+            option = Console.ReadLine();
 
-            if (op.ToLower().Trim() == "dir")
+            if (option.ToLower().Trim() == "dir")
             {
                 Console.WriteLine("Qual o caminho do diretório?");
-                caminho = Console.ReadLine();
+                path = Console.ReadLine();
 
-                Console.WriteLine(caminho);
+                Console.WriteLine(path);
 
-                if (Directory.Exists(caminho))
+                if (Directory.Exists(path))
                 {
                     Console.WriteLine("O diretório existe");
-                    string[] files = Directory.GetFiles(caminho);
+                    string[] files = Directory.GetFiles(path);
                     Console.WriteLine("Files: ");
 
                     foreach (var file in files)
@@ -40,7 +40,7 @@ namespace batch_file_renamer
                 }
 
             }
-            else if (op.ToLower().Trim() == "file")
+            else if (option.ToLower().Trim() == "file")
             {
                 Console.WriteLine("Você selecionou arquivo");
             }
