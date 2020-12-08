@@ -38,14 +38,15 @@ namespace batch_file_renamer
             }
             else if (option.ToLower().Trim() == "file")
             {
-                Console.WriteLine("Você selecionou arquivo");
+                Console.WriteLine("Qual o caminho do arquivo ?");
+                path = Console.ReadLine();
+                FileRenamer.SingleRenamer(path);
             }
             else
             {
                 Console.WriteLine("A opção selecionada não existe");
             }
         }
-
         //TODO: Criar função de menu
     }
 }
