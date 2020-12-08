@@ -29,19 +29,12 @@ namespace batch_file_renamer.Renamer
             return false;
         }
 
-        public static void RenameFiles(string path, string baseName)
+        private static List<string> ExtensionFilter()
         {
-            int counter = 0000;
-            string[] extensionsToRename;
-
-            List<string> files = new List<string>(ReturnFiles(path));
-
-            Console.WriteLine("Qual extensões devem ser renomeadas? Deixe em branco para renomear todas");
+            Console.WriteLine("Qual extensões devem ser renomeadas(Separar por vírgula)?Deixe em branco para renomear todas");
             var extensions = Console.ReadLine();
 
-            extensionsToRename = extensions.Split(",");
-
-
+            var extensionsToRename = extensions.Split(",");
 
             List<string> extensionRename = new List<string>();
 
@@ -50,20 +43,35 @@ namespace batch_file_renamer.Renamer
                 if (extRename.Length > 0) extensionRename.Add(extRename.ToLower().Trim());
             }
 
+            return extensionRename;
+        }
 
+        private static bool checkIfListIsEmpty(List<string> extensionRename)
+        {
             if (!extensionRename.Any())
             {
-                //TODO: Realizar o exclude das extensões que não façam parte do rename
-                Console.WriteLine("Lista Vazia, Todas as extensões serão renomeadas");
+                return true;
+            }
+            return false;
+        }
+
+        public static void BulkRenamer(string path, string baseName)
+        {
+            int counter = 0;
+
+            List<string> files = new List<string>(ReturnFiles(path));
+
+            var extensionsRename = ExtensionFilter();
+
+            if (checkIfListIsEmpty(extensionsRename))
+            {
+                Console.WriteLine("A lista está vazia... Todas as extensões serão renomeadas");
             }
             else
             {
-                Console.WriteLine("A Lista possui extensões: As seguintes serão renomeadas");
-                extensionRename.ForEach(ext => Console.WriteLine(ext));
+                Console.WriteLine("As seguintes extensões serão renomeadas:");
+                extensionsRename.ForEach(ext => Console.WriteLine(ext));
             }
-
-
-
 
             //TODO: Realizar a operação para cancelar a renomeação, caso seja falso
             if (ContinueRename(files))
@@ -73,7 +81,7 @@ namespace batch_file_renamer.Renamer
 
             foreach (var file in files)
             {
-                Console.WriteLine($"{file} --- {counter}");
+                Console.WriteLine($"{file} --- {counter:D4}");
                 counter++;
                 //TODO: Realizar a renomeação
 
@@ -81,6 +89,20 @@ namespace batch_file_renamer.Renamer
                 * Path.GetExtension(file) retorna a extensão -- Path possui métodos estáticos para trabalhar com os nomes dos arquivos
                 */
             }
+        }
+
+        public static void SingleRenamer(string path)
+        {
+            Console.WriteLine("Qual o novo nome do arquivo ?");
+            var newName = Console.ReadLine();
+
+            var extension = Path.GetExtension(path);
+            //var root = Path.GetDirectoryName(path);
+            var rootPath = Directory.GetParent(path);
+
+            File.Move(path, String.Format($"{rootPath}/{newName}{extension}"));
+
+            //TODO: Adicionar opção de abrir o file explorer
         }
     }
 }
