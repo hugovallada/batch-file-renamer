@@ -28,7 +28,7 @@ namespace batch_file_renamer
                     Console.WriteLine("Qual o nome base dos novos arquivos? Deixe em branco para utilizar um contador");
                     baseName = Console.ReadLine();
 
-                    FileRenamer.RenameFiles(path, baseName);
+                    FileRenamer.BulkRenamer(path, baseName);
                 }
                 else
                 {
@@ -45,5 +45,7 @@ namespace batch_file_renamer
                 Console.WriteLine("A opção selecionada não existe");
             }
         }
+
+        //TODO: Criar função de menu
     }
 }
