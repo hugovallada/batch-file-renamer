@@ -15,6 +15,12 @@ namespace batch_file_renamer.Renamer
 
         private static bool ContinueRename(List<string> files)
         {
+            if (!files.Any())
+            {
+                Console.WriteLine("Nenhum arquivo com as extensões selecionadas foram encontrados no diretório.");
+                return false;
+            }
+
             Console.WriteLine("Os seguintes arquivos serão renomeados: ");
             foreach (var file in files)
             {
@@ -46,13 +52,48 @@ namespace batch_file_renamer.Renamer
             return extensionRename;
         }
 
-        private static bool checkIfListIsEmpty(List<string> extensionRename)
+        private static bool CheckIfListIsEmpty(List<string> extensionRename)
         {
             if (!extensionRename.Any())
             {
                 return true;
             }
             return false;
+        }
+
+        private static bool ExistsInList(List<string> extensionRename, string file)
+        {
+            var ext = Path.GetExtension(file);
+
+            if (CheckIfListIsEmpty(extensionRename))
+            {
+                return true;
+            }
+
+            foreach (var extRename in extensionRename)
+            {
+                if (extRename == ext)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static List<string> FileFilter(List<string> files, List<string> extensionRename)
+        {
+            List<string> filteredFiles = new List<string>();
+
+            files.ForEach(file =>
+            {
+                if (ExistsInList(extensionRename, file))
+                {
+                    filteredFiles.Add(file);
+                }
+            });
+
+            return filteredFiles;
         }
 
         public static void BulkRenamer(string path, string baseName)
@@ -63,31 +104,29 @@ namespace batch_file_renamer.Renamer
 
             var extensionsRename = ExtensionFilter();
 
-            if (checkIfListIsEmpty(extensionsRename))
+            var filesToRename = FileFilter(files, extensionsRename);
+
+            var continueRename = ContinueRename(filesToRename);
+
+            //TODO: Realizar a operação para cancelar a renomeação, caso seja falso
+            if (continueRename)
             {
-                Console.WriteLine("A lista está vazia... Todas as extensões serão renomeadas");
+                Console.WriteLine("Continuará");
+
+
+                foreach (var file in files)
+                {
+                    counter++;
+                    //TODO: Realizar a renomeação
+
+                    /*
+                    * Path.GetExtension(file) retorna a extensão -- Path possui métodos estáticos para trabalhar com os nomes dos arquivos
+                    */
+                }
             }
             else
             {
-                Console.WriteLine("As seguintes extensões serão renomeadas:");
-                extensionsRename.ForEach(ext => Console.WriteLine(ext));
-            }
-
-            //TODO: Realizar a operação para cancelar a renomeação, caso seja falso
-            if (ContinueRename(files))
-            {
-                Console.WriteLine("Continuará");
-            }
-
-            foreach (var file in files)
-            {
-                Console.WriteLine($"{file} --- {counter:D4}");
-                counter++;
-                //TODO: Realizar a renomeação
-
-                /*
-                * Path.GetExtension(file) retorna a extensão -- Path possui métodos estáticos para trabalhar com os nomes dos arquivos
-                */
+                Console.WriteLine("Renomeação cancelada");
             }
         }
 
