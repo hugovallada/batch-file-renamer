@@ -81,7 +81,16 @@ namespace batch_file_renamer.Renamer
             return false;
         }
 
-        public static List<string> FileFilter(List<string> files, List<string> extensionRename)
+        private static void RenameFile(string file, string name)
+        {
+            var extension = Path.GetExtension(file);
+            var rootPath = Directory.GetParent(file);
+            var newPath = String.Format($"{rootPath}/{name}{extension}");
+
+            File.Move(file, newPath);
+        }
+
+        private static List<string> FileFilter(List<string> files, List<string> extensionRename)
         {
             List<string> filteredFiles = new List<string>();
 
@@ -106,23 +115,28 @@ namespace batch_file_renamer.Renamer
 
             var filesToRename = FileFilter(files, extensionsRename);
 
+
             var continueRename = ContinueRename(filesToRename);
 
-            //TODO: Realizar a operação para cancelar a renomeação, caso seja falso
             if (continueRename)
             {
-                Console.WriteLine("Continuará");
-
-
-                foreach (var file in files)
+                filesToRename.ForEach(file =>
                 {
-                    counter++;
-                    //TODO: Realizar a renomeação
+                    String name = "";
 
-                    /*
-                    * Path.GetExtension(file) retorna a extensão -- Path possui métodos estáticos para trabalhar com os nomes dos arquivos
-                    */
-                }
+                    if (baseName.Trim().Length > 0)
+                    {
+                        name = $"{counter:D4}-{baseName}";
+                    }
+                    else
+                    {
+                        name = $"{counter:D4}";
+                    }
+
+                    RenameFile(file, name);
+
+                    counter++;
+                });
             }
             else
             {
