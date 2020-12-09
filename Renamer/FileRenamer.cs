@@ -148,13 +148,7 @@ namespace batch_file_renamer.Renamer
         {
             Console.WriteLine("Qual o novo nome do arquivo ?");
             var newName = Console.ReadLine();
-
-            var extension = Path.GetExtension(path);
-            //var root = Path.GetDirectoryName(path);
-            var rootPath = Directory.GetParent(path);
-
-            File.Move(path, String.Format($"{rootPath}/{newName}{extension}"));
-
+            RenameFile(path, newName);
             //TODO: Adicionar opção de abrir o file explorer
         }
     }
