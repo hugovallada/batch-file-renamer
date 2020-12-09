@@ -15,6 +15,12 @@ namespace batch_file_renamer.Renamer
 
         private static bool ContinueRename(List<string> files)
         {
+            if (!files.Any())
+            {
+                Console.WriteLine("Nenhum arquivo com as extensões selecionadas foram encontrados no diretório.");
+                return false;
+            }
+
             Console.WriteLine("Os seguintes arquivos serão renomeados: ");
             foreach (var file in files)
             {
@@ -46,13 +52,57 @@ namespace batch_file_renamer.Renamer
             return extensionRename;
         }
 
-        private static bool checkIfListIsEmpty(List<string> extensionRename)
+        private static bool CheckIfListIsEmpty(List<string> extensionRename)
         {
             if (!extensionRename.Any())
             {
                 return true;
             }
             return false;
+        }
+
+        private static bool ExistsInList(List<string> extensionRename, string file)
+        {
+            var ext = Path.GetExtension(file);
+
+            if (CheckIfListIsEmpty(extensionRename))
+            {
+                return true;
+            }
+
+            foreach (var extRename in extensionRename)
+            {
+                if (extRename == ext)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static void RenameFile(string file, string name)
+        {
+            var extension = Path.GetExtension(file);
+            var rootPath = Directory.GetParent(file);
+            var newPath = String.Format($"{rootPath}/{name}{extension}");
+
+            File.Move(file, newPath);
+        }
+
+        private static List<string> FileFilter(List<string> files, List<string> extensionRename)
+        {
+            List<string> filteredFiles = new List<string>();
+
+            files.ForEach(file =>
+            {
+                if (ExistsInList(extensionRename, file))
+                {
+                    filteredFiles.Add(file);
+                }
+            });
+
+            return filteredFiles;
         }
 
         public static void BulkRenamer(string path, string baseName)
@@ -63,31 +113,34 @@ namespace batch_file_renamer.Renamer
 
             var extensionsRename = ExtensionFilter();
 
-            if (checkIfListIsEmpty(extensionsRename))
+            var filesToRename = FileFilter(files, extensionsRename);
+
+
+            var continueRename = ContinueRename(filesToRename);
+
+            if (continueRename)
             {
-                Console.WriteLine("A lista está vazia... Todas as extensões serão renomeadas");
+                filesToRename.ForEach(file =>
+                {
+                    String name = "";
+
+                    if (baseName.Trim().Length > 0)
+                    {
+                        name = $"{counter:D4}-{baseName}";
+                    }
+                    else
+                    {
+                        name = $"{counter:D4}";
+                    }
+
+                    RenameFile(file, name);
+
+                    counter++;
+                });
             }
             else
             {
-                Console.WriteLine("As seguintes extensões serão renomeadas:");
-                extensionsRename.ForEach(ext => Console.WriteLine(ext));
-            }
-
-            //TODO: Realizar a operação para cancelar a renomeação, caso seja falso
-            if (ContinueRename(files))
-            {
-                Console.WriteLine("Continuará");
-            }
-
-            foreach (var file in files)
-            {
-                Console.WriteLine($"{file} --- {counter:D4}");
-                counter++;
-                //TODO: Realizar a renomeação
-
-                /*
-                * Path.GetExtension(file) retorna a extensão -- Path possui métodos estáticos para trabalhar com os nomes dos arquivos
-                */
+                Console.WriteLine("Renomeação cancelada");
             }
         }
 
@@ -95,13 +148,7 @@ namespace batch_file_renamer.Renamer
         {
             Console.WriteLine("Qual o novo nome do arquivo ?");
             var newName = Console.ReadLine();
-
-            var extension = Path.GetExtension(path);
-            //var root = Path.GetDirectoryName(path);
-            var rootPath = Directory.GetParent(path);
-
-            File.Move(path, String.Format($"{rootPath}/{newName}{extension}"));
-
+            RenameFile(path, newName);
             //TODO: Adicionar opção de abrir o file explorer
         }
     }
