@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System;
 using System.IO;
@@ -27,6 +29,27 @@ namespace batch_file_renamer.Renamer
             if (continuar.ToLower().Trim() == "y") return true;
 
             return false;
+        }
+
+        public static void openTerminal(string path)
+        {
+            Console.WriteLine(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    Arguments = path,
+                    FileName = "xdg-open"
+                }
+            };
+
+            process.Start();
+
+            process.WaitForExit();
+
+
+
+
         }
 
         public static void RenameFiles(string path, string baseName)
@@ -81,6 +104,8 @@ namespace batch_file_renamer.Renamer
                 * Path.GetExtension(file) retorna a extensão -- Path possui métodos estáticos para trabalhar com os nomes dos arquivos
                 */
             }
+
+            openTerminal(path);
         }
     }
 }
