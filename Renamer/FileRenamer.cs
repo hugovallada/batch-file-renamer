@@ -144,10 +144,8 @@ namespace batch_file_renamer.Renamer
             }
         }
 
-        public static void SingleRenamer(string path)
+        public static void SingleRenamer(string path, string newName)
         {
-            Console.WriteLine("Qual o novo nome do arquivo ?");
-            var newName = Console.ReadLine();
             RenameFile(path, newName);
             //TODO: Adicionar opção de abrir o file explorer
         }
