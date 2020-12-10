@@ -36,9 +36,9 @@ namespace batch_file_renamer
             {
                 Console.WriteLine("Qual o caminho do arquivo ?");
                 var path = Console.ReadLine();
-                Console.WriteLine("Qual o nome base dos novos arquivos? Deixe em branco para utilizar um contador");
-                var baseName = Console.ReadLine();
-                FileRenamer.SingleRenamer(path, baseName);
+                Console.WriteLine("Qual o nome base dos novo arquivo?");
+                var newFileName = Console.ReadLine();
+                FileRenamer.SingleRenamer(path, newFileName);
             }
             else
             {
@@ -91,9 +91,9 @@ namespace batch_file_renamer
             if (!File.Exists(path)) throw new Exception("O arquivo não existe");
 
             Console.WriteLine("Qual o novo nome do arquivo ?");
-            var newName = Console.ReadLine();
+            var newFileName = Console.ReadLine();
 
-            FileRenamer.SingleRenamer(path, newName);
+            FileRenamer.SingleRenamer(path, newFileName);
 
         }
     }
