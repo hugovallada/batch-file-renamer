@@ -34,7 +34,6 @@ namespace batch_file_renamer
                 {
                     Console.WriteLine("O diretório não existe");
                 }
-
             }
             else if (option.ToLower().Trim() == "file")
             {
@@ -47,6 +46,26 @@ namespace batch_file_renamer
                 Console.WriteLine("A opção selecionada não existe");
             }
         }
-        //TODO: Criar função de menu
+        
+        //TODO: Criar funções para cada opção e fazer tratamento de erros
+        static void menu(string option)
+        {
+            if (option.ToLower().Trim() == "dir")
+            {
+
+            }
+            else if(option.ToLower().Trim() == "file")
+            {
+
+            }
+            else if(option.ToLower().Trim() == "exit")
+            {
+                Console.WriteLine("Programa finalizado!!!");
+            }
+            else
+            {
+                menu(option);
+            }
+        }
     }
 }
