@@ -21,27 +21,18 @@ namespace batch_file_renamer
             }
         }
 
-        //TODO: Realizar o tratamento de erros
         static void menu()
         {
-            Console.WriteLine("Deseja trabalhar com arquivo ou diretório? (file/dir)");
+            Console.WriteLine("Deseja trabalhar com arquivo ou diretório? (file/dir)\nCaso deseje sair, digite exit!");
             var option = Console.ReadLine();
 
             if (option.ToLower().Trim() == "dir")
             {
-                try
-                {
-                    menuDir();
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine($"Um error aconteceu: {exception.Message}");
-                    menu();
-                }
+                sandBox(menuDir);
             }
             else if (option.ToLower().Trim() == "file")
             {
-                menuFile();
+                sandBox(menuFile);
             }
             else if (option.ToLower().Trim() == "exit")
             {
@@ -78,6 +69,20 @@ namespace batch_file_renamer
 
             FileRenamer.SingleRenamer(path, newFileName);
 
+        }
+
+        // Realiza o try/catch das funções específicas e chama o menuPrincipal em caso de erro
+        static void sandBox(Action menuFunc)
+        {
+            try
+            {
+                menuFunc();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"Um erro aconteceu: {exception.Message}");
+                menu();
+            }
         }
 
     }
