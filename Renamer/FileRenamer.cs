@@ -144,9 +144,9 @@ namespace batch_file_renamer.Renamer
             }
         }
 
-        public static void SingleRenamer(string path, string newName)
+        public static void SingleRenamer(string path, string newFileName)
         {
-            RenameFile(path, newName);
+            RenameFile(path, newFileName);
             //TODO: Adicionar opção de abrir o file explorer
         }
     }
