@@ -9,7 +9,6 @@ namespace batch_file_renamer
 
         static void Main(string[] args)
         {
-
             Console.WriteLine("Batch File Renamer - Versão 1.0");
             try
             {
@@ -44,6 +43,7 @@ namespace batch_file_renamer
             }
         }
 
+        
         static void menuDir()
         {
             Console.WriteLine("Qual o caminho do diretório?");
@@ -83,6 +83,14 @@ namespace batch_file_renamer
                 Console.WriteLine($"Um erro aconteceu: {exception.Message}");
                 menu();
             }
+        }
+
+        //TODO: Permitir que o usuário use ~/ ao invés de /home/usuário
+        static string validadePath(string path)
+        {
+            var home = Environment.GetEnvironmentVariable("HOME");
+            //FIXME: Se path começar com ~/, deve ser substituido pela variável home
+            return path;
         }
 
     }
