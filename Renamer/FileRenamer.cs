@@ -1,3 +1,6 @@
+using System.Net;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System;
 using System.IO;
@@ -22,9 +25,10 @@ namespace batch_file_renamer.Renamer
 
             Console.WriteLine("Os seguintes arquivos serão renomeados: ");
             files.ForEach(file => Console.WriteLine(file));
-
-            Console.WriteLine("Deseja continuar?(y/N)");
+            
+            Console.WriteLine("\nDeseja continuar?(y/N)");
             var continuar = Console.ReadLine();
+            Console.WriteLine();
 
             if (continuar.ToLower().Trim() == "y") return true;
 
@@ -101,6 +105,58 @@ namespace batch_file_renamer.Renamer
             return filteredFiles;
         }
 
+        //REVIEW: Precisa ser testado no Mac e no Windows
+        private static void OpenExplorerOS(string path)
+        {
+            if (!OpenExplorerInquirer()) return;
+
+            // Checa se o sistema é linux
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                OpenExplorer(path, "xdg-open");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                OpenExplorer(path, "open");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                OpenExplorer(path, "explorer");
+            }
+            else
+            {
+                Console.WriteLine("Não foi possível abrir o explorer");
+            }
+
+        }
+
+        private static void OpenExplorer(string path, string cmd)
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    Arguments = path,
+                    FileName = cmd
+                }
+            };
+
+            process.Start();
+
+            process.WaitForExit();
+        }
+
+        private static bool OpenExplorerInquirer()
+        {
+            Console.WriteLine("Deseja abrir o explorer no diretório do(s) arquivo(s) renomeado(s) ? (y/N)");
+            var option = Console.ReadLine().ToLower();
+
+            if (option == "y" || option == "yes") return true;
+
+            return false;
+
+        }
+
         public static void BulkRenamer(string path, string baseName)
         {
             int counter = 0;
@@ -110,7 +166,6 @@ namespace batch_file_renamer.Renamer
             var extensionsRename = ExtensionFilter();
 
             var filesToRename = FileFilter(files, extensionsRename);
-
 
             var continueRename = ContinueRename(filesToRename);
 
@@ -133,6 +188,8 @@ namespace batch_file_renamer.Renamer
 
                     counter++;
                 });
+
+                OpenExplorerOS(path);
             }
             else
             {
@@ -143,7 +200,7 @@ namespace batch_file_renamer.Renamer
         public static void SingleRenamer(string path, string newFileName)
         {
             RenameFile(path, newFileName);
-            //TODO: Adicionar opção de abrir o file explorer
+            OpenExplorerOS(path);
         }
     }
 }
