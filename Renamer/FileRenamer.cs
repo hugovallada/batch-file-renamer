@@ -25,9 +25,10 @@ namespace batch_file_renamer.Renamer
 
             Console.WriteLine("Os seguintes arquivos serão renomeados: ");
             files.ForEach(file => Console.WriteLine(file));
-
-            Console.WriteLine("Deseja continuar?(y/N)");
+            
+            Console.WriteLine("\nDeseja continuar?(y/N)");
             var continuar = Console.ReadLine();
+            Console.WriteLine();
 
             if (continuar.ToLower().Trim() == "y") return true;
 
@@ -104,13 +105,23 @@ namespace batch_file_renamer.Renamer
             return filteredFiles;
         }
 
-        //TODO: Abrir explorer no windows e mac
-        private static void OpenExplorer(string path)
+        //REVIEW: Precisa ser testado no Mac e no Windows
+        private static void OpenExplorerOS(string path)
         {
+            if (!OpenExplorerInquirer()) return;
+
             // Checa se o sistema é linux
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                OpenLinuxExplorer(path);
+                OpenExplorer(path, "xdg-open");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                OpenExplorer(path, "open");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                OpenExplorer(path, "explorer");
             }
             else
             {
@@ -119,14 +130,14 @@ namespace batch_file_renamer.Renamer
 
         }
 
-        private static void OpenLinuxExplorer(string path)
+        private static void OpenExplorer(string path, string cmd)
         {
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     Arguments = path,
-                    FileName = "xdg-open"
+                    FileName = cmd
                 }
             };
 
@@ -135,7 +146,17 @@ namespace batch_file_renamer.Renamer
             process.WaitForExit();
         }
 
-        // Aplicar DRY na pergunta ao usuário se quer abrir o repositório
+        private static bool OpenExplorerInquirer()
+        {
+            Console.WriteLine("Deseja abrir o explorer no diretório do(s) arquivo(s) renomeado(s) ? (y/N)");
+            var option = Console.ReadLine().ToLower();
+
+            if (option == "y" || option == "yes") return true;
+
+            return false;
+
+        }
+
         public static void BulkRenamer(string path, string baseName)
         {
             int counter = 0;
@@ -145,7 +166,6 @@ namespace batch_file_renamer.Renamer
             var extensionsRename = ExtensionFilter();
 
             var filesToRename = FileFilter(files, extensionsRename);
-
 
             var continueRename = ContinueRename(filesToRename);
 
@@ -169,12 +189,7 @@ namespace batch_file_renamer.Renamer
                     counter++;
                 });
 
-                Console.WriteLine("Deseja abrir o explorer na pasta dos arquivos renomeados?(y/N)");
-                var openExplorer = Console.ReadLine();
-                if (openExplorer == "y")
-                {
-                    OpenExplorer(path);
-                }
+                OpenExplorerOS(path);
             }
             else
             {
@@ -185,9 +200,7 @@ namespace batch_file_renamer.Renamer
         public static void SingleRenamer(string path, string newFileName)
         {
             RenameFile(path, newFileName);
-            Console.WriteLine("Abrir o explorer?");
-            var explorer = Console.ReadLine();
-            if (explorer == "y") OpenExplorer(Directory.GetParent(path).ToString());
+            OpenExplorerOS(path);
         }
     }
 }
