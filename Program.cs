@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System;
 using batch_file_renamer.Renamer;
+using System.Runtime.InteropServices;
 
 namespace batch_file_renamer
 {
@@ -9,7 +10,7 @@ namespace batch_file_renamer
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Batch File Renamer - Versão 1.0");
+            Console.WriteLine("Batch File Renamer - Versão 1.0");            
             try
             {
                 menu();
@@ -85,11 +86,17 @@ namespace batch_file_renamer
             }
         }
 
+        // Permite o uso de ~ como /home/user no sistema linux
         static string HomePathFix(string path)
         {
+            // Caso o sistema não seja linux, retorna o valor digitado sem fazer a verificação
+            if(!RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return path;
+            
+            // Pega o caminho diretório Home do usuário 
             var home = Environment.GetEnvironmentVariable("HOME");
             if(path.StartsWith('~'))
             {
+                // ~/Documents -> /home/usuario/Documents
                 path = path.Replace("~", home);
             }
             
