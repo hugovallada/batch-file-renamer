@@ -1,3 +1,6 @@
+using System.Net;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System;
 using System.IO;
@@ -101,6 +104,38 @@ namespace batch_file_renamer.Renamer
             return filteredFiles;
         }
 
+        //TODO: Abrir explorer no windows e mac
+        private static void OpenExplorer(string path)
+        {
+            // Checa se o sistema é linux
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                OpenLinuxExplorer(path);
+            }
+            else
+            {
+                Console.WriteLine("Não foi possível abrir o explorer");
+            }
+
+        }
+
+        private static void OpenLinuxExplorer(string path)
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    Arguments = path,
+                    FileName = "xdg-open"
+                }
+            };
+
+            process.Start();
+
+            process.WaitForExit();
+        }
+
+        // Aplicar DRY na pergunta ao usuário se quer abrir o repositório
         public static void BulkRenamer(string path, string baseName)
         {
             int counter = 0;
@@ -133,6 +168,13 @@ namespace batch_file_renamer.Renamer
 
                     counter++;
                 });
+
+                Console.WriteLine("Deseja abrir o explorer na pasta dos arquivos renomeados?(y/N)");
+                var openExplorer = Console.ReadLine();
+                if (openExplorer == "y")
+                {
+                    OpenExplorer(path);
+                }
             }
             else
             {
@@ -143,7 +185,9 @@ namespace batch_file_renamer.Renamer
         public static void SingleRenamer(string path, string newFileName)
         {
             RenameFile(path, newFileName);
-            //TODO: Adicionar opção de abrir o file explorer
+            Console.WriteLine("Abrir o explorer?");
+            var explorer = Console.ReadLine();
+            if (explorer == "y") OpenExplorer(Directory.GetParent(path).ToString());
         }
     }
 }
