@@ -47,7 +47,7 @@ namespace batch_file_renamer
         static void menuDir()
         {
             Console.WriteLine("Qual o caminho do diretório?");
-            var path = Console.ReadLine();
+            var path = HomePathFix(Console.ReadLine());
 
             if (!Directory.Exists(path)) throw new Exception("O diretório não existe");
 
@@ -60,7 +60,7 @@ namespace batch_file_renamer
         static void menuFile()
         {
             Console.WriteLine("Qual o caminho do arquivo ?");
-            var path = Console.ReadLine();
+            var path = HomePathFix(Console.ReadLine());
 
             if (!File.Exists(path)) throw new Exception("O arquivo não existe");
 
@@ -85,13 +85,15 @@ namespace batch_file_renamer
             }
         }
 
-        //TODO: Permitir que o usuário use ~/ ao invés de /home/usuário
-        static string validadePath(string path)
+        static string HomePathFix(string path)
         {
             var home = Environment.GetEnvironmentVariable("HOME");
-            //FIXME: Se path começar com ~/, deve ser substituido pela variável home
+            if(path.StartsWith('~'))
+            {
+                path = path.Replace("~", home);
+            }
+            
             return path;
         }
-
     }
 }
