@@ -17,15 +17,11 @@ namespace batch_file_renamer.Renamer
         {
             if (!files.Any())
             {
-                Console.WriteLine("Nenhum arquivo com as extensões selecionadas foram encontrados no diretório.");
-                return false;
+                throw new Exception("Nenhum arquivo encontrado.Confirme o caminho digitado");
             }
 
             Console.WriteLine("Os seguintes arquivos serão renomeados: ");
-            foreach (var file in files)
-            {
-                Console.WriteLine(file);
-            }
+            files.ForEach(file => Console.WriteLine(file));
 
             Console.WriteLine("Deseja continuar?(y/N)");
             var continuar = Console.ReadLine();
